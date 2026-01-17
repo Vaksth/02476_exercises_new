@@ -10,6 +10,8 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
+import wandb
+
 
 # Model Hyperparameters
 dataset_path = "datasets"
@@ -19,7 +21,7 @@ x_dim = 784
 hidden_dim = 400
 latent_dim = 20
 lr = 1e-3
-epochs = 5
+epochs = 2
 
 
 # Data loading
@@ -30,7 +32,6 @@ test_dataset = MNIST(dataset_path, transform=mnist_transform, train=False, downl
 
 train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
-
 
 class Encoder(nn.Module):
     """Gaussian MLP Encoder."""
@@ -111,6 +112,17 @@ optimizer = Adam(model.parameters(), lr=lr)
 
 print("Start training VAE...")
 model.train()
+run = wandb.init(
+    project="vae_mnist_working",
+    config={
+        "batch_size": batch_size, 
+        "x_dim": x_dim, 
+        "hidden_dim": hidden_dim, 
+        "latent_dim": latent_dim, 
+        "lr": lr, 
+        "epochs": epochs
+        }
+)
 for epoch in range(epochs):
     overall_loss = 0
     for batch_idx, (x, _) in enumerate(train_loader):
@@ -123,6 +135,10 @@ for epoch in range(epochs):
 
         x_hat, mean, log_var = model(x)
         loss = loss_function(x, x_hat, mean, log_var)
+        wandb.log({"train_loss": loss.item()})
+        # wandb log a plot of the first input image from each batch
+        images = wandb.Image(x[0].view(1, 28, 28), caption="Input image")
+        wandb.log({"images": images})
 
         overall_loss += loss.item()
 
@@ -135,6 +151,17 @@ for epoch in range(epochs):
         "\tAverage Loss: ",
         overall_loss / (batch_idx * batch_size),
     )
+    # first we save the model to a file then log it as an artifact
+    torch.save(model.state_dict(), "model.pth")
+    artifact = wandb.Artifact(
+        name="mnist_model",
+        type="model",
+        description="A simple model trained to classify MNIST images",
+        metadata={"avg_loss": overall_loss / (batch_idx * batch_size)},
+    )
+    artifact.add_file("model.pth")
+    run.log_artifact(artifact)
+
 print("Finish!!")
 
 # Generate reconstructions
