@@ -1,0 +1,33 @@
+{
+  "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+  "python": "CPython 3.11.14",
+  "startedAt": "2026-01-17T22:44:32.655573Z",
+  "args": [
+    "--batch_size=16",
+    "--epochs=5",
+    "--learning_rate=1.0814879158632509"
+  ],
+  "program": "/workspaces/dtu_mlops/s4_debugging_and_logging/exercise_files/vae_mnist_working.py",
+  "codePath": "s4_debugging_and_logging/exercise_files/vae_mnist_working.py",
+  "codePathLocal": "vae_mnist_working.py",
+  "git": {
+    "remote": "https://github.com/Vaksth/02476_exercises_new.git",
+    "commit": "594cbe86c1adde5cf00c356e4f6e3855983d202e"
+  },
+  "email": "s234855@dtu.dk",
+  "root": "/workspaces/dtu_mlops/s4_debugging_and_logging/exercise_files",
+  "host": "3336d02e49e1",
+  "executable": "/workspaces/dtu_mlops/.venv/bin/python",
+  "cpu_count": 2,
+  "cpu_count_logical": 4,
+  "disk": {
+    "/": {
+      "total": "1081101176832",
+      "used": "12402434048"
+    }
+  },
+  "memory": {
+    "total": "3948138496"
+  },
+  "writerId": "h4kmfcgzv8u3sym54o4epj1vrcktxrko"
+}

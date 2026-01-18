@@ -1,0 +1,52 @@
+_wandb:
+    value:
+        cli_version: 0.24.0
+        e:
+            iw3503vhvj78f1aeegyqo0vb7ix6q62b:
+                args:
+                    - --batch_size=64
+                    - --epochs=5
+                    - --learning_rate=1.016159487743742
+                codePath: s4_debugging_and_logging/exercise_files/vae_mnist_working.py
+                codePathLocal: vae_mnist_working.py
+                cpu_count: 2
+                cpu_count_logical: 4
+                disk:
+                    /:
+                        total: "1081101176832"
+                        used: "12402352128"
+                email: s234855@dtu.dk
+                executable: /workspaces/dtu_mlops/.venv/bin/python
+                git:
+                    commit: 594cbe86c1adde5cf00c356e4f6e3855983d202e
+                    remote: https://github.com/Vaksth/02476_exercises_new.git
+                host: 3336d02e49e1
+                memory:
+                    total: "3948138496"
+                os: Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.41
+                program: /workspaces/dtu_mlops/s4_debugging_and_logging/exercise_files/vae_mnist_working.py
+                python: CPython 3.11.14
+                root: /workspaces/dtu_mlops/s4_debugging_and_logging/exercise_files
+                startedAt: "2026-01-17T22:42:35.636802Z"
+                writerId: iw3503vhvj78f1aeegyqo0vb7ix6q62b
+        m: []
+        python_version: 3.11.14
+        t:
+            "1":
+                - 1
+                - 41
+            "2":
+                - 1
+                - 41
+            "3":
+                - 14
+            "4": 3.11.14
+            "5": 0.24.0
+            "12": 0.24.0
+            "13": linux-x86_64
+batch_size:
+    value: 64
+epochs:
+    value: 5
+learning_rate:
+    value: 1.016159487743742

@@ -12,16 +12,18 @@ from torchvision.datasets import MNIST
 from torchvision.utils import save_image
 import wandb
 
+run = wandb.init(project="vae_mnist_working")
+config = wandb.config
 
 # Model Hyperparameters
 dataset_path = "datasets"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
-batch_size = 100
+batch_size = config.batch_size
 x_dim = 784
 hidden_dim = 400
 latent_dim = 20
-lr = 1e-3
-epochs = 2
+lr = config.learning_rate
+epochs = config.epochs
 
 
 # Data loading
@@ -112,23 +114,12 @@ optimizer = Adam(model.parameters(), lr=lr)
 
 print("Start training VAE...")
 model.train()
-run = wandb.init(
-    project="vae_mnist_working",
-    config={
-        "batch_size": batch_size, 
-        "x_dim": x_dim, 
-        "hidden_dim": hidden_dim, 
-        "latent_dim": latent_dim, 
-        "lr": lr, 
-        "epochs": epochs
-        }
-)
 for epoch in range(epochs):
     overall_loss = 0
     for batch_idx, (x, _) in enumerate(train_loader):
         if batch_idx % 100 == 0:
             print(batch_idx)
-        x = x.view(batch_size, x_dim)
+        x = x.view(x.size(0), x_dim)
         x = x.to(DEVICE)
 
         optimizer.zero_grad()
@@ -162,6 +153,18 @@ for epoch in range(epochs):
     artifact.add_file("model.pth")
     run.log_artifact(artifact)
 
+    # Validation after each epoch
+    model.eval()
+    val_loss = 0
+    with torch.no_grad():
+        for x, _ in test_loader:
+            x = x.view(x.size(0), x_dim).to(DEVICE)
+            x_hat, mean, log_var = model(x)
+            loss = loss_function(x, x_hat, mean, log_var)
+            val_loss += loss.item()
+    val_loss /= len(test_loader)
+    wandb.log({"validation_loss": val_loss})
+
 print("Finish!!")
 
 # Generate reconstructions
@@ -170,7 +173,7 @@ with torch.no_grad():
     for batch_idx, (x, _) in enumerate(test_loader):
         if batch_idx % 100 == 0:
             print(batch_idx)
-        x = x.view(batch_size, x_dim)
+        x = x.view(x.size(0), x_dim)
         x = x.to(DEVICE)
         x_hat, _, _ = model(x)
         break

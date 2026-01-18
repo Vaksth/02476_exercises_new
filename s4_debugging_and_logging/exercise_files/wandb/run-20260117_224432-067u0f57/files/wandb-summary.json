@@ -1,0 +1,1 @@
+{"_timestamp":1.7686898871615975e+09,"_step":1,"images":{"width":28,"height":28,"caption":"Input image","_type":"image-file","sha256":"fb041506f5a1d9c2d68ad33a30f8e44e443f2a6aa116a62f13345e3a1f3dac64","size":271,"path":"media/images/images_1_fb041506f5a1d9c2d68a.png","format":"png"},"_runtime":11,"_wandb":{"runtime":11},"train_loss":8761.9765625}
