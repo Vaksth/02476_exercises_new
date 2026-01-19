@@ -1,0 +1,6 @@
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source $HOME/.cargo/env
+
+# Install Dependencies
+uv sync --dev

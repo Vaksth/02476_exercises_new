@@ -10,30 +10,39 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
-import wandb
+# import wandb
 
-run = wandb.init(project="vae_mnist_working")
-config = wandb.config
+
+
+# run = wandb.init(project="vae_mnist_working")
+# config = wandb.config
 
 # Model Hyperparameters
 dataset_path = "datasets"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
-batch_size = config.batch_size
+batch_size = 32
 x_dim = 784
 hidden_dim = 400
 latent_dim = 20
-lr = config.learning_rate
-epochs = config.epochs
+lr = 0.001
+epochs = 5
 
 
 # Data loading
-mnist_transform = transforms.Compose([transforms.ToTensor()])
+def get_data(dataset_path, batch_size):
 
-train_dataset = MNIST(dataset_path, transform=mnist_transform, train=True, download=True)
-test_dataset = MNIST(dataset_path, transform=mnist_transform, train=False, download=True)
+    mnist_transform = transforms.Compose([transforms.ToTensor()])
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
+    train_dataset = MNIST(dataset_path, transform=mnist_transform, train=True, download=True)
+    test_dataset = MNIST(dataset_path, transform=mnist_transform, train=False, download=True)
+
+    train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, test_loader
+
+train_loader, test_loader = get_data(dataset_path, batch_size)
+
 
 class Encoder(nn.Module):
     """Gaussian MLP Encoder."""
@@ -126,10 +135,10 @@ for epoch in range(epochs):
 
         x_hat, mean, log_var = model(x)
         loss = loss_function(x, x_hat, mean, log_var)
-        wandb.log({"train_loss": loss.item()})
+        # wandb.log({"train_loss": loss.item()})
         # wandb log a plot of the first input image from each batch
-        images = wandb.Image(x[0].view(1, 28, 28), caption="Input image")
-        wandb.log({"images": images})
+        # images = wandb.Image(x[0].view(1, 28, 28), caption="Input image")
+        # wandb.log({"images": images})
 
         overall_loss += loss.item()
 
@@ -143,15 +152,15 @@ for epoch in range(epochs):
         overall_loss / (batch_idx * batch_size),
     )
     # first we save the model to a file then log it as an artifact
-    torch.save(model.state_dict(), "model.pth")
-    artifact = wandb.Artifact(
-        name="mnist_model",
-        type="model",
-        description="A simple model trained to classify MNIST images",
-        metadata={"avg_loss": overall_loss / (batch_idx * batch_size)},
-    )
-    artifact.add_file("model.pth")
-    run.log_artifact(artifact)
+    # torch.save(model.state_dict(), "model.pth")
+    # artifact = wandb.Artifact(
+    #     name="mnist_model",
+    #     type="model",
+    #     description="A simple model trained to classify MNIST images",
+    #     metadata={"avg_loss": overall_loss / (batch_idx * batch_size)},
+    # )
+    # artifact.add_file("model.pth")
+    # run.log_artifact(artifact)
 
     # Validation after each epoch
     model.eval()
@@ -163,7 +172,7 @@ for epoch in range(epochs):
             loss = loss_function(x, x_hat, mean, log_var)
             val_loss += loss.item()
     val_loss /= len(test_loader)
-    wandb.log({"validation_loss": val_loss})
+    print({"validation_loss": val_loss})
 
 print("Finish!!")
 

@@ -1,10 +1,39 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-    "name": "my_working_env",
-    "dockerFile": "Dockerfile",
-
+    "name": "exercise_env",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/python:3.12-bullseye",
     "features": {
-        "ghcr.io/devcontainers/features/git:1": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
     },
 
-    "postCreateCommand": "pip install -r requirements.txt"
+    "runArgs": [
+        "-v=/var/run/docker.sock:/var/run/docker.sock"
+    ],
+
+    "overrideCommand": true,
+
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "bash .devcontainer/post_create.sh",
+
+    // Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "editorconfig.editorconfig",
+                "anthropic.claude-code",
+                "github.copilot-chat",
+                "github.copilot"
+            ],
+            "settings": {
+                "python.testing.pytestArgs": ["tests"],
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestEnabled": true,
+                "python.defaultInterpreterPath": "/workspaces/trashsorting/.venv/bin/python",
+                "python.testing.pytestPath": "/workspaces/trashsorting/.venv/bin/pytest"
+            }
+        }
+    }
 }
